@@ -11,4 +11,6 @@ Black as Work Day.
 
 ![](https://i.imgur.com/RLmxx0S.png)
 
-Alan Chen.
+
+
+ I will update this project to be more functional.
