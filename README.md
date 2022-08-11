@@ -1,14 +1,28 @@
-# React Calendar
+# React Calendar 
 
-npm package: **date-fns**
+ A Simple Calendar by using ReactJs.
+ 
+ npm: **Date-fns**
+Official: [https://date-fns.org/](https://)
 
-This calendar is a static project, without any promise to connect DataBase.
-Next time, I will do Calendar better and more powerful.
+---
+![](https://i.imgur.com/nKZRNQv.gif)
 
-Green as Today.
-Red as Weekend.
-Black as Work Day.
+**My Logics:**
 
-![](https://i.imgur.com/RLmxx0S.png)
+Q1: How to Render the Dates?
 
-I will update this project to be more functional.
+A: eachDayOfInterval !
+Find the first day of first week and last day of last week.
+
+Q2: How to distinguish each day with CSS color?
+
+A: isSameDay, isWeekend, isSameMonth
+
+
+---
+
+
+Be updating 
+
+Alan Chen. 
