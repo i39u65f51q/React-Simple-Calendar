@@ -1,17 +1,19 @@
-import { useState, useId } from 'react';
+import React, { useState, useId, forwardRef } from 'react';
 //npm
 import { v4 as uuidv4 } from 'uuid';
-import { format, parseISO } from 'date-fns';
+import { parseISO, formatISO } from 'date-fns';
 //redux
 import { useDispatch, useSelector } from 'react-redux';
 import { calendarActions } from '../redux/CalendarSlice';
+//Components
+import SmallCalendar from './SmallCalendar';
 
-const Form = () => {
+const Form = forwardRef((props, inputRef) => {
   const [nameInput, setNameInput] = useState('');
   const [reminderInput, setReminderInput] = useState('');
+  const [reminderDate, setReminderDate] = useState(new Date());
   const id = useId();
 
-  const selectedDate = useSelector(state => state.calendar.selectedDate);
   const dispatch = useDispatch();
 
   //Submit Data to Reminder
@@ -21,62 +23,90 @@ const Form = () => {
     dispatch(
       calendarActions.addReminder({
         id: uuidv4(),
-        name: nameInput,
+        type: nameInput,
         content: reminderInput,
-        date: format(parseISO(selectedDate), 'MMMM d yyy'),
+        date: formatISO(reminderDate),
       })
     );
-
+    console.log(reminderDate);
     setNameInput('');
     setReminderInput('');
+    dispatch(calendarActions.closeForm());
   };
 
   //Submit Button
   const validOnSubmit =
-    nameInput.trim() !== '' && reminderInput.trim() !== ''
+    reminderInput.trim() !== ''
       ? 'pointer-events-auto opacity-1'
       : 'pointer-events-none opacity-20';
 
   return (
-    <form action="" className="w-full flex items-center justify-center gap-2  ">
-      <div className="font-bold text-blue-500 text-lg">
-        {format(parseISO(selectedDate), ' MMMM d ')}
+    <div
+      className=" border w-fit  flex flex-col items-center justify-center gap-5  
+    rounded-lg shadow-xl 
+    absolute -translate-x-1/2 -translate-y-1/2 left-1/2 top-1/2
+    bg-white overflow-hidden "
+    >
+      <div className="w-full border p-2 bg-slate-600 text-white">
+        <h4 className="font-bold text-center">Input New Reminder </h4>
       </div>
-      <div>
-        <label htmlFor={id + '-name'} className="font-bold text-sm">
-          Name:
-        </label>
-        <input
-          type="text"
-          id={id + '-name'}
-          className="border border-black rounded px-2"
-          placeholder="Enter your name"
-          value={nameInput}
-          onChange={e => setNameInput(e.target.value)}
-        />
-      </div>
-      <div>
-        <label htmlFor={id + '-reminder'} className="font-bold text-sm">
-          Reminder:
-        </label>
-        <input
-          type="text"
-          id={id + '-reminder'}
-          className="border border-black rounded px-2 "
-          placeholder="Enter your reminder"
-          value={reminderInput}
-          onChange={e => setReminderInput(e.target.value)}
-        />
-      </div>
-      {/* Submit Button */}
-      <input
-        type="submit"
-        className={` ${validOnSubmit} border px-2 font-bold rounded border-black text-white bg-slate-600`}
-        value="Submit"
-        onClick={addReminder}
-      />
-    </form>
+      <form
+        action=""
+        ref={inputRef}
+        className=" bg-white p-5 flex flex-col items-center justify-center gap-10"
+      >
+        <div className="flex gap-5">
+          {/* Calendar  */}
+          <SmallCalendar setReminderDate={setReminderDate} />
+          {/*  Select Type */}
+          <div className="flex flex-col justify-between">
+            <div className="flex flex-col gap-3">
+              <div className="flex flex-col">
+                <label htmlFor={id + '-name'} className="font-bold text-sm">
+                  Type:
+                </label>
+                <select
+                  name=""
+                  id={id + '-name'}
+                  value={nameInput}
+                  onChange={e => setNameInput(e.target.value)}
+                  className="border border-black rounded px-2"
+                >
+                  <option value="School">School</option>
+                  <option value="Work">Work</option>
+                  <option value="Life">Life</option>
+                </select>
+              </div>
+              {/* Input Reminder */}
+              <div className="flex flex-col">
+                <label
+                  htmlFor={id + '-reminder'}
+                  className="font-bold text-sm w-24"
+                >
+                  Reminder:
+                </label>
+                <input
+                  type="text"
+                  id={id + '-reminder'}
+                  className="border border-black rounded px-2 "
+                  placeholder="Enter your reminder"
+                  value={reminderInput}
+                  onChange={e => setReminderInput(e.target.value)}
+                />
+              </div>
+            </div>
+            {/* Submit Button */}
+            <input
+              type="submit"
+              className={` ${validOnSubmit} w-full px-2 py-1 text-sm font-bold rounded border-black text-white bg-slate-600`}
+              value="Submit"
+              onClick={addReminder}
+            />
+          </div>
+        </div>
+      </form>
+    </div>
   );
-};
+});
 
 export default Form;

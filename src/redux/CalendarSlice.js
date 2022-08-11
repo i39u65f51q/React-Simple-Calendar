@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { addMonths, subMonths, formatISO, parseISO, format } from 'date-fns';
+import { addMonths, subMonths, formatISO, parseISO } from 'date-fns';
 
 const initialState = {
   currentDate: formatISO(new Date()),
@@ -13,8 +13,11 @@ const calendarSlice = createSlice({
   name: 'calendar',
   initialState: initialState,
   reducers: {
-    toggleForm: state => {
-      state.isShowForm = !state.isShowForm;
+    openForm: state => {
+      state.isShowForm = true;
+    },
+    closeForm: state => {
+      state.isShowForm = false;
     },
     addReminder: (state, action) => {
       state.reminder = [...state.reminder, action.payload];

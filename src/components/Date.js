@@ -24,7 +24,7 @@ const Date = ({ day }) => {
     return isSameDay(day, parseISO(today)) && isSameMonth(day, parseISO(today));
   };
   const isNotSameMonth = day => {
-    return !isSameMonth(day, parseISO(selectedDate));
+    return !isSameMonth(day, parseISO(today));
   };
   const isWeekend = day => {
     return (
@@ -38,49 +38,69 @@ const Date = ({ day }) => {
     return isSameDay(parseISO(selectedDate), day);
   };
 
-  const clickHander = day => {
+  const clickHandler = day => {
     dispatch(setSelectedDate(formatISO(day)));
+  };
+
+  const getTodo = day => {
+    const result = [];
+    let note = null;
+    for (let i = 0; i < reminder.length; i++) {
+      if (isSameDay(parseISO(reminder[i].date), day)) {
+        note = reminder[i].content;
+        result.push(
+          <div
+            key={uuidv4()}
+            className="flex items-center gap-2 w-full overflow-y-auto "
+          >
+            <AiTwotoneCalendar />
+            {note}
+          </div>
+        );
+      }
+    }
+    return result;
   };
 
   return (
     <>
-      <div className="flex flex-col" key={uuidv4()}>
-        <div className="h-5">
-          {reminder.some(item => isSameDay(item.date, day)) && (
-            <AiTwotoneCalendar />
-          )}
-        </div>
-        <button
-          className={`
+      <button
+        onClick={() => clickHandler(day)}
+        className={`
+        h-28
+        flex flex-col  items-start border border-slate-300 p-2 
+        overflow-y-auto
+
               ${isNormalDay(day) ? 'text-slate-800' : ''}
               ${isSameDaySameMonth(day) ? 'text-green-500' : ''}
               ${isWeekend(day) ? 'text-red-500' : ''}
            ${
              isNotSameMonth(day)
-               ? 'font-bold h-10 text-slate-300 pointer-events-none'
+               ? 'pointer-events-none font-bold text-slate-300 '
                : ''
            },
            ${
              isSameWithSelectedDate(day) && isNormalDay(day)
-               ? 'bg-slate-500 text-white'
+               ? 'bg-slate-500 text-slate-50 pointer-events-none'
                : ''
            }
            ${
              isSameWithSelectedDate(day) && isSameDaySameMonth(day)
-               ? 'bg-green-500 text-white'
+               ? ' bg-green-500 text-slate-50 pointer-events-none'
                : ''
            }
            ${
              isSameWithSelectedDate(day) && isWeekend(day)
-               ? 'bg-red-500 text-white'
+               ? 'bg-red-500 text-slate-50 pointer-events-none'
                : ''
            }
            `}
-          onClick={() => clickHander(day)}
-        >
-          {format(day, 'd')}
-        </button>
-      </div>
+      >
+        <p className="font-bold">{format(day, 'd')}</p>
+        <div className="text-xs w-full flex flex-col items-start gap-1 ">
+          {getTodo(day)}
+        </div>
+      </button>
     </>
   );
 };
