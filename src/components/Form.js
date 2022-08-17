@@ -1,7 +1,7 @@
 import React, { useState, useId, forwardRef } from 'react';
 //npm
 import { v4 as uuidv4 } from 'uuid';
-import { parseISO, formatISO } from 'date-fns';
+import { formatISO } from 'date-fns';
 //redux
 import { useDispatch, useSelector } from 'react-redux';
 import { calendarActions } from '../redux/CalendarSlice';
@@ -9,26 +9,27 @@ import { calendarActions } from '../redux/CalendarSlice';
 import SmallCalendar from './SmallCalendar';
 
 const Form = forwardRef((props, inputRef) => {
-  const [nameInput, setNameInput] = useState('');
+  const [nameInput, setNameInput] = useState('School');
   const [reminderInput, setReminderInput] = useState('');
   const [reminderDate, setReminderDate] = useState(new Date());
   const id = useId();
 
   const dispatch = useDispatch();
 
-  //Submit Data to Reminder
-  const addReminder = e => {
-    e.preventDefault();
+  const { addReminder, submitHandler } = calendarActions;
 
+  //Submit Data to Reminder
+  const submitReminder = e => {
+    e.preventDefault();
+    dispatch(submitHandler(true));
     dispatch(
-      calendarActions.addReminder({
+      addReminder({
         id: uuidv4(),
         type: nameInput,
         content: reminderInput,
         date: formatISO(reminderDate),
       })
     );
-    console.log(reminderDate);
     setNameInput('');
     setReminderInput('');
     dispatch(calendarActions.closeForm());
@@ -100,7 +101,7 @@ const Form = forwardRef((props, inputRef) => {
               type="submit"
               className={` ${validOnSubmit} w-full px-2 py-1 text-sm font-bold rounded border-black text-white bg-slate-600`}
               value="Submit"
-              onClick={addReminder}
+              onClick={submitReminder}
             />
           </div>
         </div>
